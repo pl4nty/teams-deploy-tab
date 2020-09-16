@@ -1,13 +1,22 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'Deploy Teams tab'
+author: 'pl4nty'
+description: 'Deploy a custom tab to Microsoft Teams'
+branding:
+    icon: 'upload-cloud'
+    color: 'purple'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  TENANT_ID:
+    description: 'AzureAD tenant (directory) ID'
     required: true
-    default: '1000'
+  APP_ID:
+    description: 'AzureAD application ID'
+    required: true
+  APP_SECRET:
+    description: 'AzureAD application secret'
+    required: true
 outputs:
-  time: # output will be available to future steps
-    description: 'The message to output'
+  time:
+    description: 'The time we greeted you'
 runs:
   using: 'node12'
   main: 'dist/index.js'
