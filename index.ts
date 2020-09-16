@@ -5,15 +5,13 @@ import * as Responses from "@microsoft/microsoft-graph-types";
 import { AuthProvider } from "./AuthProvider";
 
 async function run() {
-  const TENANT_ID = core.getInput('TENANT_ID');
-  const APP_ID = core.getInput('APP_ID');
-  const APP_SECRET = core.getInput('APP_SECRET');
+  const AAD_APP_ID = core.getInput('AAD_APP_ID');
   const TEAMS_APP_NAME = core.getInput('TEAMS_APP_NAME');
   const MANIFEST_PATH = core.getInput('MANIFEST_PATH');
-// AppCatalog.ReadWrite.All
+
   try {
     const client = Client.initWithMiddleware({
-      authProvider: new AuthProvider(TENANT_ID, APP_ID, APP_SECRET)
+      authProvider: new AuthProvider(AAD_APP_ID)
     });
 
     const apps: {

@@ -1,30 +1,42 @@
-# GitHub action to deploy a custom tab to Microsoft Teams
-Updates a Microsoft Teams custom app in a tenant from a manifest file.
+# Deploy an app to the Microsoft Teams app store
+Creates or updates a Microsoft Teams custom app from a manifest zip file.
 
 # Prerequisites
-* [Register an application in AzureAD with the Application-level Group.ReadWrite.All permission](https://docs.microsoft.com/en-us/graph/auth-register-app-v2)
+* Global administrator account (application-level permissions aren't supported)
+* [AzureAD application](https://docs.microsoft.com/en-us/graph/auth-register-app-v2)
 
-# Variables
-* Tenant (Directory) ID
-* Application ID
-* Application (Client) secret
+# Instructions
+1. View the action logs while running (eg https://github.com/pl4nty/anutimetable/actions?query=is%3Ain_progress) 
+2. Browse to the provided link within 15 minutes
+3. Authenticate with a global administrator account
+4. Check the box to grant admin consent for the requested permissions
+4. Enter the provided code
+
+# Inputs (required)
+Variable | Description
+-|-
+AAD_APP_ID | AzureAD application ID
+TEAMS_APP_NAME | App display name
+MANIFEST_PATH | Path to the manifest file
 
 # Example
 ```yml
 on: push
 name: Deploy to Teams
-
 jobs:
-  publish:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@master
+    - name: Download build artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: my-artifact
 
-    - name: Deploy
+    - name: Deploy to Teams store
       uses: pl4nty/teams-deploy-tab@v1
       env:
-        TENANT_ID: ${{ secrets.TENANT_ID }}
-        APP_ID: ${{ secrets.APP_ID }}
-        APP_SECRET: ${{ secrets.APP_SECRET }}
+        APP_NAME: My App
+        MANIFEST_PATH: package/manifest.zip
+      with:
+        name: my-artifact
 ```
