@@ -19,10 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: ./
+    - name: Create dummy manifest
+      uses: montudor/action-zip@v0.1.0
+      with:
+        args: zip -qq -r manifest.zip .
+    - name: Deploy tab
+      uses: ./
       env:
         AAD_APP_ID: 342e5d4b-7fa3-400e-8bae-7035ee615a5e
         TEAMS_APP_NAME: My App
-        MANIFEST_PATH: package/manifest.zip
-      with:
-        name: my-artifact
+        MANIFEST_PATH: manifest.zip
