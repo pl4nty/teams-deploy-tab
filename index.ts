@@ -1,5 +1,6 @@
 import * as core from "@actions/core"; 
 import { createReadStream, readFile } from "fs";
+import "isomorphic-fetch";
 import { Client } from "@microsoft/microsoft-graph-client";
 import * as Responses from "@microsoft/microsoft-graph-types";
 import { AuthProvider } from "./AuthProvider";

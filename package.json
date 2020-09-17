@@ -26,7 +26,8 @@
   "dependencies": {
     "@actions/core": "^1.2.5",
     "@microsoft/microsoft-graph-client": "^2.0.0",
-    "axios": "^0.20.0"
+    "axios": "^0.20.0",
+    "isomorphic-fetch": "^2.2.1"
   },
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "^1.21.0",
