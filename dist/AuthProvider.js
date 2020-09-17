@@ -21,26 +21,22 @@ class DeviceAuthStart {
 class DeviceAuthPoll {
 }
 class AuthProvider {
-    constructor(app) {
+    constructor(tenant, app) {
+        this.tenant = tenant;
         this.app = app;
     }
     getAccessToken() {
         return __awaiter(this, void 0, void 0, function* () {
             const start = Date.now();
-            const res = yield axios_1.default.get(`https://login.microsoftonline.com/organizations/oauth2/v2.0/devicecode`, {
+            const res = (yield axios_1.default.post(`https://login.microsoftonline.com/${this.tenant}/oauth2/v2.0/devicecode`, querystring_1.stringify({
+                client_id: this.app,
+                scope: "https://graph.microsoft.com/AppCatalog.ReadWrite.All"
+            }), {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
-                },
-                data: querystring_1.stringify({
-                    client_id: this.app,
-                    scope: [
-                        "https://graph.microsoft.com/AppCatalog.ReadWrite.All"
-                    ].join(" ")
-                })
-            });
+                }
+            })).data;
             core_1.info(res.message);
-            core_1.info(`Link: ${res.verification_uri}`);
-            core_1.info(`Code: ${res.user_code}`);
             return new Promise((resolve, reject) => {
                 // Calculate epoch expiry time
                 const expiry = start + res.expires_in * 1000;
@@ -51,22 +47,24 @@ class AuthProvider {
                         resolve(yield this.getAccessToken());
                     }
                     else {
-                        const poll = yield axios_1.default.get(`https://login.microsoftonline.com/organizations/oauth2/v2.0/`, {
-                            headers: {
-                                "Content-Type": "application/x-www-form-urlencoded"
-                            },
-                            data: querystring_1.stringify({
+                        try {
+                            const poll = (yield axios_1.default.post(`https://login.microsoftonline.com/${this.tenant}/oauth2/v2.0/token`, querystring_1.stringify({
                                 grant_type: "urn:ietf:params:oauth:grant-type:device_code",
                                 client_id: this.app,
                                 device_code: res.device_code
-                            })
-                        });
-                        if (!poll.error) {
-                            resolve(poll.id_token);
+                            }), {
+                                headers: {
+                                    "Content-Type": "application/x-www-form-urlencoded"
+                                }
+                            })).data;
+                            resolve(poll.access_token);
                         }
-                        else if (poll.error !== "authorization_pending") {
-                            clearInterval(interval);
-                            resolve(yield this.getAccessToken());
+                        catch (err) {
+                            if (err.response.data.error !== "authorization_pending") {
+                                clearInterval(interval);
+                                core_1.info("Session expired, trying again...");
+                                resolve(yield this.getAccessToken());
+                            }
                         }
                     }
                 }), res.interval * 1000);

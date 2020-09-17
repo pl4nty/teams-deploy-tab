@@ -35,16 +35,18 @@ const microsoft_graph_client_1 = require("@microsoft/microsoft-graph-client");
 const AuthProvider_1 = require("./AuthProvider");
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        const TENANT_ID = core.getInput('TENANT_ID');
         const AAD_APP_ID = core.getInput('AAD_APP_ID');
         const TEAMS_APP_NAME = core.getInput('TEAMS_APP_NAME');
         const MANIFEST_PATH = core.getInput('MANIFEST_PATH');
         try {
             const client = microsoft_graph_client_1.Client.initWithMiddleware({
-                authProvider: new AuthProvider_1.AuthProvider(AAD_APP_ID)
+                authProvider: new AuthProvider_1.AuthProvider(TENANT_ID, AAD_APP_ID)
             });
+            console.log(TEAMS_APP_NAME);
             const apps = (yield client
                 .api(`/appCatalogs/teamsApps`)
-                .filter(`distributionMethod eq 'organization' and name eq '${TEAMS_APP_NAME}'`)
+                .filter(`distributionMethod eq 'organization' and displayName eq '${TEAMS_APP_NAME}'`)
                 .get()).value;
             if (apps) {
                 yield client
@@ -59,7 +61,7 @@ function run() {
             }
         }
         catch (error) {
-            core.setFailed(error.message);
+            core.setFailed(error);
         }
     });
 }

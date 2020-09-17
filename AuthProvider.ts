@@ -23,30 +23,27 @@ class DeviceAuthPoll {
     "interval"?: number
 }
 export class AuthProvider implements AuthenticationProvider {
+    private tenant: string;
     private app: string;
 
-    constructor(app: string) {
+    constructor(tenant: string, app: string) {
+        this.tenant = tenant;
         this.app = app;
     }
 
     public async getAccessToken(): Promise<string> {
         const start = Date.now();
 
-        const res: DeviceAuthStart = await axios.get(`https://login.microsoftonline.com/organizations/oauth2/v2.0/devicecode`, {
+        const res: DeviceAuthStart = (await axios.post(`https://login.microsoftonline.com/${this.tenant}/oauth2/v2.0/devicecode`, stringify({
+            client_id: this.app,
+            scope: "https://graph.microsoft.com/AppCatalog.ReadWrite.All"
+        }), {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
-            },
-            data: stringify({
-                client_id: this.app,
-                scope: [
-                    "https://graph.microsoft.com/AppCatalog.ReadWrite.All"
-                ].join(" ")
-            })
-        });
+            }
+        })).data;
 
         info(res.message);
-        info(`Link: ${res.verification_uri}`);
-        info(`Code: ${res.user_code}`);
 
         return new Promise((resolve, reject) => {
             // Calculate epoch expiry time
@@ -58,22 +55,24 @@ export class AuthProvider implements AuthenticationProvider {
                     clearInterval(interval);
                     resolve(await this.getAccessToken());
                 } else {
-                    const poll: DeviceAuthPoll = await axios.get(`https://login.microsoftonline.com/organizations/oauth2/v2.0/`, {
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        data: stringify({
+                    try {
+                        const poll: DeviceAuthPoll = (await axios.post(`https://login.microsoftonline.com/${this.tenant}/oauth2/v2.0/token`, stringify({
                             grant_type: "urn:ietf:params:oauth:grant-type:device_code",
                             client_id: this.app,
                             device_code: res.device_code
-                        })
-                    });
+                        }), {
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            }
+                        })).data;
 
-                    if (!poll.error) {
-                        resolve(poll.id_token);
-                    } else if (poll.error !== "authorization_pending") {
-                        clearInterval(interval);
-                        resolve(await this.getAccessToken());
+                        resolve(poll.access_token);
+                    } catch (err) {
+                        if (err.response.data.error !== "authorization_pending") {
+                            clearInterval(interval);
+                            info("Session expired, trying again...");
+                            resolve(await this.getAccessToken());
+                        }
                     }
                 }
             }, res.interval*1000)
