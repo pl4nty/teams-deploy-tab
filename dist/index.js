@@ -30,6 +30,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const fs_1 = require("fs");
+require("isomorphic-fetch");
 const microsoft_graph_client_1 = require("@microsoft/microsoft-graph-client");
 const AuthProvider_1 = require("./AuthProvider");
 function run() {
