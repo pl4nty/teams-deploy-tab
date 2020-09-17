@@ -48,34 +48,34 @@ export class AuthProvider implements AuthenticationProvider {
         console.log(`Code: ${res.user_code}`);
 
         return new Promise((resolve, reject) => {
-            this.poll(resolve, reject, res.device_code, res.interval, start+res.expires_in*1000)
-        });
-    }
+            // Calculate epoch expiry time
+            const expiry = start + res.expires_in*1000;
 
-    private async poll(resolve, reject, code: string, interval: number, expiry: number) {
-        if (Date.now() >= expiry) {
-            resolve(await this.getAccessToken());
-        } else {
-            setTimeout(async () => {
-                const poll: DeviceAuthPoll = await axios.get(`https://login.microsoftonline.com/organizations/oauth2/v2.0/`, {
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    data: stringify({
-                        grant_type: "urn:ietf:params:oauth:grant-type:device_code",
-                        client_id: this.app,
-                        device_code: code
-                    })
-                });
-
-                if (!poll.error) {
-                    resolve(poll.id_token);
-                } else if (poll.error === "authorization_pending") {
-                    this.poll(resolve, reject, code, poll.interval, expiry);
-                } else {
+            const interval = setInterval(async () => {
+                // Retry on timeout
+                if (Date.now() >= expiry) {
+                    clearInterval(interval);
                     resolve(await this.getAccessToken());
+                } else {
+                    const poll: DeviceAuthPoll = await axios.get(`https://login.microsoftonline.com/organizations/oauth2/v2.0/`, {
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        data: stringify({
+                            grant_type: "urn:ietf:params:oauth:grant-type:device_code",
+                            client_id: this.app,
+                            device_code: res.device_code
+                        })
+                    });
+
+                    if (!poll.error) {
+                        resolve(poll.id_token);
+                    } else if (poll.error !== "authorization_pending") {
+                        clearInterval(interval);
+                        resolve(await this.getAccessToken());
+                    }
                 }
-            }, interval)
-        }
+            }, res.interval*1000)
+        });
     }
 }
