@@ -1,3 +1,4 @@
+import { info } from '@actions/core';
 import { AuthenticationProvider } from "@microsoft/microsoft-graph-client";
 import axios from 'axios';
 import { stringify } from 'querystring';
@@ -43,9 +44,9 @@ export class AuthProvider implements AuthenticationProvider {
             })
         });
 
-        console.log(res.message);
-        console.log(`Link: ${res.verification_uri}`);
-        console.log(`Code: ${res.user_code}`);
+        info(res.message);
+        info(`Link: ${res.verification_uri}`);
+        info(`Code: ${res.user_code}`);
 
         return new Promise((resolve, reject) => {
             // Calculate epoch expiry time

@@ -35,7 +35,8 @@ jobs:
     - name: Deploy to Teams store
       uses: pl4nty/teams-deploy-tab@v1
       env:
-        APP_NAME: My App
+        AAD_APP_ID: 342e5d4b-7fa3-400e-8bae-7035ee615a5e
+        TEAMS_APP_NAME: My App
         MANIFEST_PATH: package/manifest.zip
       with:
         name: my-artifact
