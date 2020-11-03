@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/pl4nty/teams-deploy-tab#readme",
   "dependencies": {
-    "@actions/core": "^1.2.5",
+    "@actions/core": "^1.2.6",
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "axios": "^0.20.0",
     "isomorphic-fetch": "^3.0.0"
