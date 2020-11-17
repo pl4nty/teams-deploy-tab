@@ -14,7 +14,7 @@ Creates or updates a Microsoft Teams custom app from a manifest zip file.
 7. Add the Microsoft Graph `AppCatalog.ReadWrite.All` Delegated permission and grant admin consent
 
 # Usage
-1. View the action logs while running (eg https://github.com/pl4nty/teams-deploy-tab/actions?query=is%3Ain_progress) 
+1. View the action logs while running
 2. Browse to the provided link within 15 minutes
 3. Authenticate with a global administrator account
 4. Enter the provided code
