@@ -5,6 +5,7 @@
     ":semanticCommits"
   ],
   "separateMinorPatch": true,
+  "rangeStrategy": "pin",
   "lockFileMaintenance": {
     "enabled": true
   },
