@@ -16,8 +16,6 @@ async function run() {
       authProvider: new AuthProvider(TENANT_ID, AAD_APP_ID)
     });
 
-    console.log(TEAMS_APP_NAME)
-
     const apps: {
       id: string,
       externalId: string,
