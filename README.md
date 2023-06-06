@@ -5,7 +5,7 @@ Creates or updates a Microsoft Teams custom app from a manifest zip file.
 * Global administrator account (application-level permissions aren't supported)
 
 # Setup
-1. [Register an AzureAD application](https://docs.microsoft.com/en-us/graph/auth-register-app-v2)
+1. [Register an Azure AD application](https://docs.microsoft.com/en-us/graph/auth-register-app-v2)
 2. Copy the Tenant and Application IDs
 3. Navigate to the Authentication tab
 4. Configure the Reply URI as `https://login.microsoftonline.com/common/oauth2/nativeclient`
@@ -22,8 +22,8 @@ Creates or updates a Microsoft Teams custom app from a manifest zip file.
 # Inputs (required)
 Variable | Description
 -|-
-TENANT_ID | AzureAD Tenant ID
-AAD_APP_ID | AzureAD application ID
+TENANT_ID | Azure AD Tenant ID
+AAD_APP_ID | Azure AD application ID
 TEAMS_APP_NAME | App display name
 MANIFEST_PATH | Path to the manifest file
 

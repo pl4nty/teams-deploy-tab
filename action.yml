@@ -6,17 +6,14 @@ branding:
     color: 'purple'
 inputs:
   TENANT_ID:
-    description: 'AzureAD tenant (directory) ID'
+    description: 'Azure AD tenant (directory) ID'
     required: true
   APP_ID:
-    description: 'AzureAD application ID'
+    description: 'Azure AD application ID'
     required: true
   APP_SECRET:
-    description: 'AzureAD application secret'
+    description: 'Azure AD application secret'
     required: true
-outputs:
-  time:
-    description: 'The time we greeted you'
 runs:
   using: 'node12'
   main: 'dist/index.js'
