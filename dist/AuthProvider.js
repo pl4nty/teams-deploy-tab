@@ -28,7 +28,7 @@ class AuthProvider {
     getAccessToken() {
         return __awaiter(this, void 0, void 0, function* () {
             const start = Date.now();
-            const res = (yield axios_1.default.post(`https://login.microsoftonline.com/${this.tenant}/oauth2/v2.0/devicecode`, querystring_1.stringify({
+            const res = (yield axios_1.default.post(`https://login.microsoftonline.com/${this.tenant}/oauth2/v2.0/devicecode`, (0, querystring_1.stringify)({
                 client_id: this.app,
                 scope: "https://graph.microsoft.com/AppCatalog.ReadWrite.All"
             }), {
@@ -36,7 +36,7 @@ class AuthProvider {
                     "Content-Type": "application/x-www-form-urlencoded"
                 }
             })).data;
-            core_1.info(res.message);
+            (0, core_1.info)(res.message);
             return new Promise((resolve, reject) => {
                 // Calculate epoch expiry time
                 const expiry = start + res.expires_in * 1000;
@@ -48,7 +48,7 @@ class AuthProvider {
                     }
                     else {
                         try {
-                            const poll = (yield axios_1.default.post(`https://login.microsoftonline.com/${this.tenant}/oauth2/v2.0/token`, querystring_1.stringify({
+                            const poll = (yield axios_1.default.post(`https://login.microsoftonline.com/${this.tenant}/oauth2/v2.0/token`, (0, querystring_1.stringify)({
                                 grant_type: "urn:ietf:params:oauth:grant-type:device_code",
                                 client_id: this.app,
                                 device_code: res.device_code
@@ -62,7 +62,7 @@ class AuthProvider {
                         catch (err) {
                             if (err.response.data.error !== "authorization_pending") {
                                 clearInterval(interval);
-                                core_1.info("Session expired, trying again...");
+                                (0, core_1.info)("Session expired, trying again...");
                                 resolve(yield this.getAccessToken());
                             }
                         }

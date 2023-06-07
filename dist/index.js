@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -43,7 +47,6 @@ function run() {
             const client = microsoft_graph_client_1.Client.initWithMiddleware({
                 authProvider: new AuthProvider_1.AuthProvider(TENANT_ID, AAD_APP_ID)
             });
-            console.log(TEAMS_APP_NAME);
             const apps = (yield client
                 .api(`/appCatalogs/teamsApps`)
                 .filter(`distributionMethod eq 'organization' and displayName eq '${TEAMS_APP_NAME}'`)
@@ -51,10 +54,10 @@ function run() {
             if (apps) {
                 yield client
                     .api(`/appCatalogs/teamsApps/${apps[0].id}/appDefinitions`)
-                    .putStream(fs_1.createReadStream(MANIFEST_PATH));
+                    .putStream((0, fs_1.createReadStream)(MANIFEST_PATH));
             }
             else {
-                fs_1.readFile(MANIFEST_PATH, res => client
+                (0, fs_1.readFile)(MANIFEST_PATH, res => client
                     .api(`/appCatalogs/teamsApps`)
                     .header('Content-Type', 'application/zip')
                     .post(res));
