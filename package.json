@@ -32,6 +32,6 @@
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "2.33.0",
     "@types/node": "18.16.18",
-    "typescript": "5.1.3"
+    "typescript": "5.1.5"
   }
 }
