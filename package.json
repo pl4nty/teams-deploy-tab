@@ -30,7 +30,7 @@
     "isomorphic-fetch": "3.0.0"
   },
   "devDependencies": {
-    "@microsoft/microsoft-graph-types": "2.38.0",
+    "@microsoft/microsoft-graph-types": "2.40.0",
     "@types/node": "18.17.9",
     "typescript": "5.2.2"
   }
